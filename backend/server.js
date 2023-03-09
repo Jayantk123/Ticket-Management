@@ -10,4 +10,6 @@ app.get('/',(req,res)=>{
     })
 })
 
+app.use('/api/users',require('./routes/userRoutes'))
+
 app.listen(PORT,()=> console.log(`server started ${PORT}`))
