@@ -5,9 +5,19 @@ const Ticket = require('../models/ticketModel')
 // routes /api/tickets/ .....get user tickets 
 // private access 
 const getTickets = asyncHandler(async (req, res) => {
+// get user id from jwt
+const user = await User.findById(req.user.id)
 
+if(!user) {
+  res.status(401)
+  throw new Error("User not found");
+}
+
+const ticket = await Ticket.find({user:req.user.id})
   
-  res.status(200).json({ message:'getTickets'})
+ 
+
+  res.status(200).json(ticket);
   })
 
 
@@ -16,8 +26,29 @@ const getTickets = asyncHandler(async (req, res) => {
 // post
 const createTicket = asyncHandler(async (req, res) => {
 
-  
-    res.status(200).json({ message:'create ticket'})
+  const { product, description}=req.body
+
+  if(!product ||!description) {
+    res.status(400) 
+     throw new Error('Please add a product and description')
+  }
+
+  const user = await User.findById(req.user.id)
+
+if(!user) {
+  res.status(401)
+  throw new Error("User not found");
+}
+
+const ticket = await Ticket.create({
+  product,
+  description,
+  user:req.user.id,
+  status:'new'
+})
+
+
+    res.status(201).json(ticket)
     })
 
 
